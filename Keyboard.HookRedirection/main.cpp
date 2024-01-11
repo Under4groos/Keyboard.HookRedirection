@@ -60,9 +60,8 @@ LRESULT CALLBACK _keyboard_hook(const int code, const WPARAM wParam, const LPARA
 				ZeroMemory(inputs, sizeof(inputs));
 				inputs[0].type = INPUT_KEYBOARD;
 				inputs[0].ki.time = 0;
-
 				inputs[0].ki.wVk = keysr;
-				inputs[0].ki.dwFlags = 0;
+			 
 
 				UINT uSent = SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 				if (uSent != ARRAYSIZE(inputs))
@@ -71,6 +70,25 @@ LRESULT CALLBACK _keyboard_hook(const int code, const WPARAM wParam, const LPARA
 				}
 
 			}
+			for (DWORD keysr : n.KeysRedirect) {
+				cout << keysr << " ";
+
+
+				INPUT inputs[1] = {};
+				ZeroMemory(inputs, sizeof(inputs));
+				inputs[0].type = INPUT_KEYBOARD;
+				inputs[0].ki.time = 0;
+				inputs[0].ki.wVk = keysr;
+				inputs[0].ki.dwFlags = KEYEVENTF_KEYUP;
+
+				UINT uSent = SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
+				if (uSent != ARRAYSIZE(inputs))
+				{
+					cout << (L"Failed: 0x%x\n", HRESULT_FROM_WIN32(GetLastError())) << endl;
+				}
+
+			}
+
 			cout << endl;
 
 
@@ -88,15 +106,21 @@ LRESULT CALLBACK _keyboard_hook(const int code, const WPARAM wParam, const LPARA
 
 int main()
 {
-	KeysRedirect.push_back(KeyRedirect{ 49, {72 , 74} });
+	KeysRedirect.push_back(KeyRedirect{ 49, {91} });
+
+	 
 
 	hHook = SetWindowsHookEx(WH_KEYBOARD_LL, _keyboard_hook, NULL, 0);
 	if (hHook == NULL) {
 		std::cout << "Keyboard hook failed!" << std::endl;
 	}
 
+
+	 
 	 
 	while (GetMessage(NULL, NULL, 0, 0));
+	if(hHook)
+		UnhookWindowsHookEx(hHook);
 	return 0;
 }
 
