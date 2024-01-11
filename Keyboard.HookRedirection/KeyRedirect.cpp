@@ -1,11 +1,18 @@
 #include <Windows.h>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 struct KeyRedirect
 {
     WORD KeyDown;
-    WORD KeyRedirect;
+
+    std::vector<WORD> KeyRedirect = {};
+
+
+
+    
 };
+
 
  
